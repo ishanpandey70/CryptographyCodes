@@ -13,11 +13,53 @@ int RepIdx =-1;
 char ciphertext2[60];
 char ciphertext3[60];
 int shiftKey=0;
+char decrypt3[60]; // corresponds to decryption of ciphertext3
+char decrypt2[60]; // corresponds to decryption of decrypt3
 bool isCorrect(char plaintext[60]);
 
 void findij(char ch, char matrix[5][5],int* x , int* y);
 void playfair_encryption(char * plaintext,char matrix[5][5],int length);
+void affine_decryption(char * decrypt3);
+int gcdExtended(int a, int b, int *x, int *y);
+int gcdExtended(int a, int b, int *x, int *y)
+{
+    if (a == 0)
+    {
+        *x = 0;
+        *y = 1;
+        return b;
+    }
+    int x1, y1; 
+    int gcd = gcdExtended(b%a, a, &x1, &y1);
+    *x = y1 - (b/a) * x1;
+    *y = x1;
+    return gcd;
+}
 
+void affine_decryption(char * decrypt3){
+     int ainv= 0;
+     int p=0;
+     gcdExtended(11,26,&ainv,&p);
+     while(ainv<0)
+     {
+          ainv = (ainv + 26)%26;
+     }
+     int m =0;
+    while (decrypt3[m]!='\0')
+    {   
+        char ch = decrypt3[m]-97;
+        ch= (ch-15+26)%26;
+        ch= (ch*ainv)%26;
+        ch = ch+97;
+        decrypt2[m]= ch;
+        
+       m++;
+    }
+     decrypt2[m] ='\0';
+
+
+     
+}
 
 void findij(char ch, char matrix[5][5],int* x , int* y)
 {
@@ -38,6 +80,26 @@ void findij(char ch, char matrix[5][5],int* x , int* y)
 
 void affine_encryption(char * plaintext);
 void shift_encryption(char * ciphertext2);
+void shift_decryption(char * encryptShift);
+void shift_decryption(char * encryptShift){
+     int m =0;
+    while (encryptShift[m]!='\0')
+    {   
+        
+
+        char ch = encryptShift[m]-97;
+        
+        ch= (ch-shiftKey+26)%26;
+        ch = ch+97;
+        
+        decrypt3[m]= ch;
+        
+       m++;
+    }
+     decrypt3[m] ='\0';
+    
+
+}
 void shift_encryption(char * ciphertext2){
     shiftKey=0;
     printf("Enter the key: \n");
@@ -120,10 +182,6 @@ void playfair_encryption(char* plaintext,char matrix[5][5],int length){
                plaintext[i+1]= matrix[(ic1)][(jc2+1)%5];
            }
      }
-}
-shift_decryption(ciphertext3);
-shift_decryption(ciphertext3){
-     
 }
 
 
@@ -349,6 +407,9 @@ printf("\n the encrypted text  is : %s",ciphertext3);
 
 // DECRYPTION BEGINS , THIS IS JUST INVERSE OF ENCRYPTION ORDER
 shift_decryption(ciphertext3);
+printf("\n the decrypted text  is : %s",decrypt3);
+affine_decryption(decrypt3);
+printf("\n the decrypted text  is : %s",decrypt2);
 
 
 
