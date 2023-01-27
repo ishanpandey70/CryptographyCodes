@@ -4,7 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
-#include <stdbool.h>
+#include <stdbool.h> //used only for isCorrect method as string does not have inbuilt boolean type
 
 
 bool RepFlag = false;
@@ -12,8 +12,63 @@ bool lenFlag = false;
 int RepIdx =-1;
 bool isCorrect(char plaintext[60]);
 
+void findij(char ch, char matrix[5][5],int* x , int* y);
+void playfair_encryption(char * plaintext,char matrix[5][5],int length);
 
 
+void findij(char ch, char matrix[5][5],int* x , int* y)
+{
+     for(int i = 0 ; i<5;i++)
+     {
+          for(int j = 0 ; j<5; j++)
+          {
+               if(matrix[i][j]==ch)
+               {
+                    *x = i;
+                    *y =j;
+                    break;
+               }
+          }
+     }
+
+}
+
+
+void playfair_encryption(char* plaintext,char matrix[5][5],int length){
+     for(int i = 0 ; i<length ;i=i+2)
+     {
+          printf("Iteration %d",i/2);
+          int ic1=-1,ic2=-2,jc1=-1,jc2=-2;
+          findij(plaintext[i],matrix,&ic1,&jc1);
+          findij(plaintext[i+1],matrix,&ic2,&jc2);
+
+
+          //debug codes
+          // printf("\n char is %c \n",plaintext[i]);
+       
+          // printf("\n index is %d %d\n",ic1,jc1);
+
+          // printf("\n char is %c \n",plaintext[i+1]);
+          // printf("\n index is %d %d\n",ic2,jc2);
+
+          if((ic1!=ic2)&& (jc1!=jc2))
+          {
+               plaintext[i]=matrix[ic1][jc2];
+               plaintext[i+1]=matrix[ic2][jc1];
+               
+          }
+           else if((ic1!=ic2)&& (jc1==jc2)){
+               plaintext[i]= matrix[(ic1+1)%5][jc1];
+               
+               plaintext[i+1]= matrix[(ic2+1)%5][jc1];
+           }
+           else if((ic1==ic2)&& (jc1!=jc2)){
+               plaintext[i]= matrix[(ic1)][(jc1+1)%5];
+               
+               plaintext[i+1]= matrix[(ic1)][(jc2+1)%5];
+           }
+     }
+}
 
 
 bool isCorrect(char plaintext[60]){
@@ -225,10 +280,9 @@ printf("\n");
 printf("\n");
 
 //playfair encrypt
-
-
-
-
+printf("\n calling playfair encryption function \n");
+playfair_encryption(plaintext,playfairMatrix,strlen(plaintext));
+printf("\nThe cipher text is %s \n",plaintext);
 
 
 return 0;
