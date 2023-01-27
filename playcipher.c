@@ -10,6 +10,9 @@
 bool RepFlag = false;
 bool lenFlag = false;
 int RepIdx =-1;
+char ciphertext2[60];
+char ciphertext3[60];
+int shiftKey=0;
 bool isCorrect(char plaintext[60]);
 
 void findij(char ch, char matrix[5][5],int* x , int* y);
@@ -33,6 +36,55 @@ void findij(char ch, char matrix[5][5],int* x , int* y)
 
 }
 
+void affine_encryption(char * plaintext);
+void shift_encryption(char * ciphertext2);
+void shift_encryption(char * ciphertext2){
+    shiftKey=0;
+    printf("Enter the key: \n");
+    scanf("%d", &shiftKey);
+    shiftKey= shiftKey%26;
+    printf(" key is %d\n",shiftKey );
+
+    int l =0;
+    while (ciphertext2[l]!='\0')
+    {   
+        
+
+        char ch = ciphertext2[l]-97;
+
+        
+
+        ch= (ch+shiftKey)%26;
+        ch = ch+97;
+        ciphertext3[l]= ch;
+        
+       l++;
+    }
+     ciphertext3[l] ='\0';
+  
+
+
+}
+
+void affine_encryption(char * plaintext){
+     int a = 11; 
+     int b= 15 ;
+     //since it is given in question and we know gcd of 11, 15 is 1 so I am not showing that particular step.
+      int l =0;
+    while (plaintext[l]!='\0')
+    {   
+        char ch = plaintext[l]-97;
+
+        ch= (ch*11)%26;
+        ch = (ch+15)%26;
+        ch = ch+97;
+        ciphertext2[l]= ch;
+        
+       l++;
+    }
+     ciphertext2[l] ='\0';
+
+}
 
 void playfair_encryption(char* plaintext,char matrix[5][5],int length){
      for(int i = 0 ; i<length ;i=i+2)
@@ -69,6 +121,13 @@ void playfair_encryption(char* plaintext,char matrix[5][5],int length){
            }
      }
 }
+shift_decryption(ciphertext3);
+shift_decryption(ciphertext3){
+     
+}
+
+
+
 
 
 bool isCorrect(char plaintext[60]){
@@ -283,6 +342,17 @@ printf("\n");
 printf("\n calling playfair encryption function \n");
 playfair_encryption(plaintext,playfairMatrix,strlen(plaintext));
 printf("\nThe cipher text is %s \n",plaintext);
+affine_encryption(plaintext);
+printf("\n the encrypted text after affine cipher i.e  C2 : %s \n",ciphertext2);
+shift_encryption(ciphertext2);
+printf("\n the encrypted text  is : %s",ciphertext3);
+
+// DECRYPTION BEGINS , THIS IS JUST INVERSE OF ENCRYPTION ORDER
+shift_decryption(ciphertext3);
+
+
+
+
 
 
 return 0;
