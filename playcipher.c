@@ -1,26 +1,59 @@
 // 202051089 
 // Ishan Pandey
-
+//
 
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h> //used only for isCorrect method as string does not have inbuilt boolean type
 
 
-bool RepFlag = false;
-bool lenFlag = false;
-int RepIdx =-1;
-char ciphertext2[60];
-char ciphertext3[60];
-int shiftKey=0;
+bool RepFlag = false;//Flag which checks for repetetion
+bool lenFlag = false;//Flag value which checks for length to be even as playfair needs even length
+int RepIdx =-1; //RepIdx which is used to tell after what index repetition starts
+char ciphertext2[60]; //Given as C2 obtained after affine cipher
+char ciphertext3[60]; //Given as C3 obtained after shift cipher and is the final output of encryption
+int shiftKey=0; //Shiftkey of shift cipher
 char decrypt3[60]; // corresponds to decryption of ciphertext3
 char decrypt2[60]; // corresponds to decryption of decrypt3
-bool isCorrect(char plaintext[60]);
+bool isCorrect(char plaintext[60]); //Method to check if the input for playfair (and our whole pipeline is correct)
 
 void findij(char ch, char matrix[5][5],int* x , int* y);
 void playfair_encryption(char * plaintext,char matrix[5][5],int length);
 void affine_decryption(char * decrypt3);
 int gcdExtended(int a, int b, int *x, int *y);
+void affine_encryption(char * plaintext);
+void shift_encryption(char * ciphertext2);
+void shift_decryption(char * encryptShift);
+void playfair_decryption(char * playfairDecrypt,char matrix[5][5]);
+
+void playfair_decryption(char * playfairDecrypt,char matrix[5][5]){
+     for(int i = 0 ; i<strlen(playfairDecrypt) ;i=i+2)
+     {
+          
+          int ic1=-1,ic2=-2,jc1=-1,jc2=-2;
+          findij(playfairDecrypt[i],matrix,&ic1,&jc1);
+          findij(playfairDecrypt[i+1],matrix,&ic2,&jc2);
+
+          if((ic1!=ic2)&& (jc1!=jc2))
+          {
+               playfairDecrypt[i]=matrix[ic1][jc2];
+               playfairDecrypt[i+1]=matrix[ic2][jc1];
+               
+          }
+           else if((ic1!=ic2)&& (jc1==jc2)){
+               playfairDecrypt[i]= matrix[(ic1-1+5)%5][jc1];
+               
+               playfairDecrypt[i+1]= matrix[(ic2-1+5)%5][jc1];
+           }
+           else if((ic1==ic2)&& (jc1!=jc2)){
+               playfairDecrypt[i]= matrix[(ic1)][(jc1-1+5)%5];
+               
+               playfairDecrypt[i+1]= matrix[(ic1)][(jc2-1+5)%5];
+           }
+     }
+
+}
+
 int gcdExtended(int a, int b, int *x, int *y)
 {
     if (a == 0)
@@ -35,8 +68,8 @@ int gcdExtended(int a, int b, int *x, int *y)
     *y = x1;
     return gcd;
 }
-
 void affine_decryption(char * decrypt3){
+
      int ainv= 0;
      int p=0;
      gcdExtended(11,26,&ainv,&p);
@@ -60,7 +93,7 @@ void affine_decryption(char * decrypt3){
 
      
 }
-
+//method which finds the index of the element ch in playfair matrix
 void findij(char ch, char matrix[5][5],int* x , int* y)
 {
      for(int i = 0 ; i<5;i++)
@@ -77,10 +110,6 @@ void findij(char ch, char matrix[5][5],int* x , int* y)
      }
 
 }
-
-void affine_encryption(char * plaintext);
-void shift_encryption(char * ciphertext2);
-void shift_decryption(char * encryptShift);
 void shift_decryption(char * encryptShift){
      int m =0;
     while (encryptShift[m]!='\0')
@@ -255,12 +284,10 @@ int main()
 
 
                     RepFlag= false;
-                    // debug statement 
-                    // printf("Repflag = false");
                }
                else if(lenFlag)
                {
-                    // printf("lenflag case");
+                  
                     printf("The length before adding x is  %d \n",strlen(plaintext));
                     int currentlength = strlen(plaintext);
                     plaintext[currentlength]='x';
@@ -288,9 +315,7 @@ int main()
     {
      if(plaintext[i]=='j')
      {
-          // printf("\n Original plaintext was %s \n",plaintext);
           plaintext[i]='i';
-          // printf("\n New plaintext is %s \n",plaintext);
      }
      
 
@@ -312,9 +337,7 @@ scanf("%s", k1);
     {
      if(k1[i]=='j')
      {
-          // printf("\n Original plaintext was %s \n",plaintext);
           k1[i]='i';
-          // printf("\n New plaintext is %s \n",plaintext);
      }
     }
     printf("\n ****************************************************** \n"); 
@@ -365,7 +388,6 @@ for(int i = 0 ; i<26 ; i++)
     
      if(HashTable[hashpoint]==0)
      {
-          // printf("%c", 97+i);
           playfairMatrix[row][col]= (char)(97+i);
           HashTable[hashpoint]=1;
           col= (col+1);
@@ -400,16 +422,28 @@ printf("\n");
 printf("\n calling playfair encryption function \n");
 playfair_encryption(plaintext,playfairMatrix,strlen(plaintext));
 printf("\nThe cipher text is %s \n",plaintext);
+printf("\n ****************************************************** \n"); 
 affine_encryption(plaintext);
 printf("\n the encrypted text after affine cipher i.e  C2 : %s \n",ciphertext2);
-shift_encryption(ciphertext2);
-printf("\n the encrypted text  is : %s",ciphertext3);
+printf("\n ****************************************************** \n"); 
 
+shift_encryption(ciphertext2);
+printf("\n the final encrypted text  is : %s",ciphertext3);
+printf("\n ****************************************************** \n"); 
+printf("Decryption Begins");
 // DECRYPTION BEGINS , THIS IS JUST INVERSE OF ENCRYPTION ORDER
 shift_decryption(ciphertext3);
-printf("\n the decrypted text  is : %s",decrypt3);
+printf("\n the decrypted text for shift  is : %s",decrypt3);
+printf("\n ****************************************************** \n"); 
+
 affine_decryption(decrypt3);
-printf("\n the decrypted text  is : %s",decrypt2);
+printf("\n the decrypted text for affine is : %s",decrypt2);
+
+printf("\n ****************************************************** \n"); 
+playfair_decryption(decrypt2,playfairMatrix);
+printf("\n the decrypted text after playfair is : %s",decrypt2);
+printf("\n Our inital delta was %s\n",delta);
+
 
 
 
