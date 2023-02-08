@@ -15,7 +15,7 @@ char ciphertext3[60]; //Given as C3 obtained after shift cipher and is the final
 int shiftKey=0; //Shiftkey of shift cipher
 char decrypt3[60]; // corresponds to decryption of ciphertext3
 char decrypt2[60]; // corresponds to decryption of decrypt3
-bool isCorrect(char plaintext[60]); //Method to check if the input for playfair (and our whole pipeline is correct)
+bool isCorrect(char plaintext[60]); 
 
 void findij(char ch, char matrix[5][5],int* x , int* y);
 void playfair_encryption(char * plaintext,char matrix[5][5],int length);
@@ -216,7 +216,7 @@ void playfair_encryption(char* plaintext,char matrix[5][5],int length){
 
 
 
-
+//Method to check if the input for playfair (and our whole pipeline is correct)
 bool isCorrect(char plaintext[60]){
      //checking for repetetion first
      for(int i = 0 ; i<strlen(plaintext);i=i+2)
@@ -326,7 +326,7 @@ strcpy(delta,plaintext);
 printf("The delta string is %s ",delta);
 printf("\n ****************************************************** \n"); 
 char k1[60] ;
-printf("\n Enter the key text \n");
+printf("\n Enter the playfair cipher key \n");
 scanf("%s", k1);
  
    printf("\n ****************************************************** \n"); 
@@ -423,23 +423,27 @@ printf("\n calling playfair encryption function \n");
 playfair_encryption(plaintext,playfairMatrix,strlen(plaintext));
 printf("\nThe cipher text is %s \n",plaintext);
 printf("\n ****************************************************** \n"); 
+//affine encrypt
 affine_encryption(plaintext);
 printf("\n the encrypted text after affine cipher i.e  C2 : %s \n",ciphertext2);
 printf("\n ****************************************************** \n"); 
-
+//shift encrypt
 shift_encryption(ciphertext2);
 printf("\n the final encrypted text  is : %s",ciphertext3);
 printf("\n ****************************************************** \n"); 
 printf("Decryption Begins");
+
 // DECRYPTION BEGINS , THIS IS JUST INVERSE OF ENCRYPTION ORDER
+//shift decrypt
 shift_decryption(ciphertext3);
 printf("\n the decrypted text for shift  is : %s",decrypt3);
 printf("\n ****************************************************** \n"); 
-
+//affine decrypt
 affine_decryption(decrypt3);
 printf("\n the decrypted text for affine is : %s",decrypt2);
 
 printf("\n ****************************************************** \n"); 
+//playfair decrypt
 playfair_decryption(decrypt2,playfairMatrix);
 printf("\n the decrypted text after playfair is : %s",decrypt2);
 printf("\n Our inital delta was %s\n",delta);
