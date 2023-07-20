@@ -2,6 +2,14 @@
 
 #include <stdio.h>
 unsigned char a = 0x01;
+unsigned char p[4][4] = 
+{
+    {0xb7, 0xfd, 0x93, 0x26},
+    {0xb7, 0xfd, 0x93, 0x26},
+    {0xb7, 0xfd, 0x93, 0x26},
+    {0xb7, 0xfd, 0x93, 0x26}
+
+};
 unsigned char sub[16][16] =
 {
 {0x63, 0x7c, 0x77, 0x7b, 0xf2, 0x6b, 0x6f, 0xc5, 0x30, 0x01, 0x67, 0x2b, 0xfe, 0xd7, 0xab, 0x76},
@@ -22,6 +30,7 @@ unsigned char sub[16][16] =
 {0x8c, 0xa1, 0x89, 0x0d, 0xbf, 0xe6, 0x42, 0x68, 0x41, 0x99, 0x2d, 0x0f, 0xb0, 0x54, 0xbb, 0x16}};
 unsigned char subBytes(unsigned char t);
 unsigned char invSubBytes( unsigned char t);
+void shiftRow(unsigned char x[4][4]);
 
 int main(){
     printf("Please enter a hex number of 1 byte or 2 bits:");
@@ -30,6 +39,16 @@ int main(){
     printf("The output is : %hhx \n", b);
     unsigned char c = invSubBytes(b);
     printf("The output is : %hhx \n", c);
+    shiftRow(p);
+    for(int i =0  ; i< 4; i++)
+    {
+        for(int j =0 ; j<4; j++)
+        {
+            printf("%hhx ", p[i][j]);
+        }
+        printf("\n");
+    }
+
 
 return 0;
 }
@@ -60,5 +79,20 @@ unsigned char invSubBytes( unsigned char t)
         }
     }
     return x;
+}
+void shiftRow(unsigned char x[4][4])
+{
+    for (int i = 0 ; i < 5 ;i++)
+    {
+        for (int j = 0; j<i; j++)
+        {
+            unsigned char temp = x[i][0];
+            x[i][0]= x[i][1];
+            x[i][1]= x[i][2];
+            x[i][2] = x[i][3];
+            x[i][3]= x[i][0];
+        }
+    }
+
 }
 
